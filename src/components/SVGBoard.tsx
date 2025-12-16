@@ -1,6 +1,10 @@
 import { useRef, useState } from "react";
+import type { FractionBar } from "../App";
 
-export default function SvgBoard({ objects, setObjects }) {
+export default function SvgBoard({ objects, setObjects }: {
+  objects: FractionBar[];
+  setObjects: React.Dispatch<React.SetStateAction<FractionBar[]>>;
+}) {
   const svgRef = useRef(null);
   const [dragging, setDragging] = useState(null);
 
@@ -22,7 +26,9 @@ export default function SvgBoard({ objects, setObjects }) {
     const y = e.clientY - offsetY;
 
     setObjects((objs) =>
-      objs.map((o) => (o.id === id ? { ...o, x, y } : o))
+      [...(objs.filter(o => o.id !== id)),
+        { ...objs.find(o => o.id === id)!, x, y }
+      ]
     );
   };
 
@@ -69,6 +75,11 @@ function FractionBarRender({ obj, onMouseDown }) {
         fontSize="18"
         fontWeight="bold"
         pointerEvents="none"
+        style={
+          {
+            userSelect: "none"
+          }
+        }
       >
         {obj.fraction}
       </text>
